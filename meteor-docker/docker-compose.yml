@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+    meteorapp:
+        container_name: meteorapp
+        depends_on:
+            - mongo
+        image: meteor_app_hello_world
+        restart: on-failure
+        #se reincia cuando falla
+        build:
+            context: .
+            dockerfile: dockerfile
+        #esto va ligado con el dockerfile, solo existe cuando se saca un dockerfile local
+        env_file: docker.env
+        ports:
+            - 80:3000
+        networks:
+            - carlink-network
+    mongo:
+        container_name: mongo
+        image: mongo
+        restart: always
+        # se usao esto para exponer el puerto
+        ports: 
+            - 27017:27017
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: example
+        networks:
+            - carlink-network
+        volumes:
+            - $PWD/data:/data/db
+networks:
+    carlink-network:
